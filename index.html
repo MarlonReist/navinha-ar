@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Navinha AR — Jogo em Realidade Aumentada</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <video id="camera" playsinline autoplay muted></video>
+  <canvas id="overlay"></canvas>
+
+  <!-- HUD -->
+  <header id="hud" class="hud hidden">
+    <div class="hud-item"><span>Pontos</span><strong id="scoreVal">0</strong></div>
+    <div class="hud-item"><span>Onda</span><strong id="waveVal">1</strong></div>
+    <div class="hud-item"><span>Tempo</span><strong id="timeVal">0.0s</strong></div>
+    <div class="hud-item"><span>Vidas</span><strong id="livesVal">❤️❤️❤️</strong></div>
+  </header>
+
+  <div id="statusPill" class="status-pill hidden">Aponte a câmera para a folha...</div>
+
+  <!-- Controles inferiores -->
+  <footer id="controls" class="controls hidden">
+    <button id="calibrateBtn" type="button">Calibrar</button>
+    <button id="switchCamBtn" type="button">Trocar Câmera</button>
+    <button id="demoToggleBtn" type="button">Modo Demo</button>
+    <button id="restartBtn" type="button">Reiniciar</button>
+  </footer>
+
+  <!-- Tela inicial -->
+  <main id="startScreen" class="screen">
+    <div class="card">
+      <div class="tag">TRABALHO DE FACULDADE · REALIDADE AUMENTADA</div>
+      <h1>🚀 Navinha AR</h1>
+      <p class="subtitle">Destrua as naves inimigas e desvie dos meteoros usando a câmera do celular e os marcadores impressos!</p>
+
+      <ol class="steps">
+        <li><strong>Imprima a folha AR</strong> com os 4 marcadores nos cantos.</li>
+        <li><strong>Aponte a câmera</strong> para a folha deixando os marcadores visíveis.</li>
+        <li><strong>Incline a folha</strong> para esquerda/direita para pilotar a nave (tiro automático).</li>
+      </ol>
+
+      <div class="actions">
+        <button id="startBtn" class="btn-primary" type="button">Iniciar Câmera AR</button>
+        <button id="demoBtnStart" class="btn-secondary" type="button">Testar sem Papel (Demo)</button>
+        <a href="markers.html" target="_blank" class="btn-link">🖨️ Abrir / Imprimir Marcadores AR</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal de Fim de Jogo -->
+  <div id="gameOverModal" class="screen hidden">
+    <div class="card compact">
+      <h2>Fim de Missão!</h2>
+      <p class="subtitle">Você atingiu <strong id="finalScore">0</strong> pontos.</p>
+      <p class="record">Recorde: <strong id="bestScore">0</strong> pts</p>
+      <button id="retryBtn" class="btn-primary" type="button">Jogar Novamente</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
