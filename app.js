@@ -74,15 +74,53 @@ async function startCamera(mode) {
 function getDemoQuad() {
   const w = canvas.width;
   const h = canvas.height;
-  const side = Math.min(w * 0.84, h * 0.56);
+  const bw = Math.min(w * 0.92, 540);
+  const bh = Math.min(h * 0.66, 680);
   const cx = w * 0.5;
-  const cy = h * 0.52;
-  const half = side * 0.5;
+  const cy = h * 0.51;
+  const hw = bw * 0.5;
+  const hh = bh * 0.5;
   return {
-    tl: { x: cx - half, y: cy - half },
-    tr: { x: cx + half, y: cy - half },
-    br: { x: cx + half, y: cy + half },
-    bl: { x: cx - half, y: cy + half },
+    tl: { x: cx - hw, y: cy - hh },
+    tr: { x: cx + hw, y: cy - hh },
+    br: { x: cx + hw, y: cy + hh },
+    bl: { x: cx - hw, y: cy + hh },
+  };
+}
+
+function expandBoardToScreen(board) {
+  const w = canvas.width;
+  const h = canvas.height;
+  const rawW = Math.hypot(board.tr.x - board.tl.x, board.tr.y - board.tl.y);
+  const rawH = Math.hypot(board.bl.x - board.tl.x, board.bl.y - board.tl.y);
+
+  // Mantém o jogo grande e legível na tela, preservando o centro e a inclinação da folha
+  const targetW = Math.min(w * 0.92, Math.max(rawW * 1.65, w * 0.86));
+  const targetH = Math.min(h * 0.66, Math.max(rawH * 1.65, h * 0.60));
+
+  const rawCx = (board.tl.x + board.tr.x + board.br.x + board.bl.x) * 0.25;
+  const rawCy = (board.tl.y + board.tr.y + board.br.y + board.bl.y) * 0.25;
+
+  // Puxa suavemente em direção ao centro útil para não cortar o tabuleiro nas bordas
+  const cx = Math.max(targetW * 0.45, Math.min(w - targetW * 0.45, rawCx * 0.35 + w * 0.5 * 0.65));
+  const cy = Math.max(targetH * 0.48 + 56, Math.min(h - targetH * 0.48 - 64, rawCy * 0.35 + h * 0.51 * 0.65));
+
+  const angle = Math.atan2(board.tr.y - board.tl.y, board.tr.x - board.tl.x);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  const hw = targetW * 0.5;
+  const hh = targetH * 0.5;
+
+  const rot = (dx, dy) => ({
+    x: cx + dx * cos - dy * sin,
+    y: cy + dx * sin + dy * cos,
+  });
+
+  return {
+    tl: rot(-hw, -hh),
+    tr: rot(hw, -hh),
+    br: rot(hw, hh),
+    bl: rot(-hw, hh),
   };
 }
 
@@ -122,7 +160,7 @@ function loop(now) {
     }
 
     if (res.found && res.board) {
-      boardQuad = res.board;
+      boardQuad = expandBoardToScreen(res.board);
       currentAngle = Math.atan2(
         boardQuad.tr.y - boardQuad.tl.y,
         boardQuad.tr.x - boardQuad.tl.x
